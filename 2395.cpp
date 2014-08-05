@@ -1,92 +1,67 @@
 #include <cstdio>
-#include <cstring>
-#include <cstdlib>
-#include <cmath>
-#include <complex>
-#include <string>
-#include <sstream>
-#include <algorithm>
 #include <vector>
-#include <queue>
-#include <stack>
-#include <functional>
-#include <iostream>
-#include <map>
-#include <set>
+#include <algorithm>
 using namespace std;
-typedef pair<int,int> P;
-typedef long long ll;
-typedef vector<int> vi;
-typedef vector<ll> vll;
-#define pu push
-#define pb push_back
-#define mp make_pair
-#define eps 1e-9
-#define INF 2000000000
-#define sz(x) ((int)(x).size())
-#define fi first
-#define sec second
-#define SORT(x) sort((x).begin(),(x).end())
-#define all(x) (x).begin(),(x).end()
-#define EQ(a,b) (abs((a)-(b))<EPS)
+#define  INF 2000000000
+int N,M,ans=-INF;
+struct edge{int from,to,cost;};
+bool comp(edge a,edge b)
+{
+	return a.cost<b.cost;
+}
+vector<edge> v;
 struct UnionFind
 {
-	int par[2010];
-	int rank[2010];
-	void init()
+	int par[2020],rank[2020];
+	UnionFind()
 	{
-		memset(rank,0,sizeof(rank));
-		for(int i=0;i<2010;i++)par[i]=i;
+		for(int i=0;i<2020;i++)
+		{
+			par[i]=i;
+			rank[i]=0;
+		}
 		return;
 	}
 	int find(int x)
 	{
-		if(par[x]==x)return x;
-		else return find(par[x]);
+		if(x==par[x])return x;
+		else return par[x]=find(par[x]);
 	}
 	void unite(int a,int b)
 	{
 		a=find(a);
 		b=find(b);
+		if(a==b)return;
 		if(rank[a]<rank[b])par[a]=b;
 		else
 		{
 			par[b]=a;
 			if(rank[a]==rank[b])rank[a]++;
 		}
+		return;
 	}
 	bool same(int a,int b)
 	{
 		return find(a)==find(b);
 	}
-};
-UnionFind uf;
-struct edge{int from,to,cost;};
-vector<edge> edges;
-int ans=0;
-int n,m;
-bool comp(edge a,edge b)
-{
-	return a.cost<b.cost;
-}
+}uf;
 int main()
 {
-	scanf("%d %d",&n,&m);
-	for(int i=0;i<m;i++)
+	scanf("%d %d",&N,&M);
+	for(int i=0;i<M;i++)
 	{
 		edge e;
 		scanf("%d %d %d",&e.from,&e.to,&e.cost);
-		edges.pb(e);
+		e.from--;e.to--;
+		v.push_back(e);
 	}
-	sort(edges.begin(),edges.end(),comp);
-	uf.init();
-	for(int i=0;i<edges.size();i++)
+	sort(v.begin(),v.end(),comp);
+	for(int i=0;i<v.size();i++)
 	{
-		edge e = edges[i];
-		if(!uf.same(e.from,e.to))
+		if(!uf.same(v[i].from,v[i].to))
 		{
-			ans=max(ans,e.cost);
-			uf.unite(e.from,e.to);
+			ans=max(ans,v[i].cost);
+			uf.unite(v[i].from,v[i].to);
 		}
 	}
 	printf("%d\n",ans);
